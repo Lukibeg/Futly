@@ -1,0 +1,134 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+@layer components {
+
+    .player-photo {
+        @apply w-20 h-20 border border-gray-300 rounded-lg overflow-hidden;
+    }
+
+    .login-container {
+        @apply flex flex-col mx-auto p-20 border border-gray-300 rounded-md shadow-md max-w-md w-full mb-30 bg-white/20 backdrop-blur-md;
+    }
+
+    .page-info {
+        @apply absolute top-35 font-semibold rounded-md hover:text-gray-500 shadow-md hover:transition-all duration-300 hover:transform hover:scale-105 p-1 text-xl;
+    }
+
+    .title-container {
+        @apply text-center text-2xl font-bold mb-10 hover:text-gray-500 hover:transition-all duration-300 hover:transform hover:scale-105;
+    }
+
+    .navbar-list {
+        @apply flex justify-center w-full p-5 rounded-xl bg-white/20 backdrop-blur-md shadow-md;
+    }
+
+    .navbar-list a {
+        @apply mr-6 px-4 py-2 rounded-lg text-white bg-blue-600 hover:bg-blue-700 shadow-md transition;
+    }
+
+    .forget-password {
+        @apply text-center mt-3;
+
+    }
+
+    .navbar-buttons {}
+
+    /* Alertas */
+    .success-container {
+        @apply text-green-500 text-sm mb-4 bg-green-100 p-4 rounded-md hover:bg-green-200 text-center;
+    }
+
+    .error-container {
+        @apply text-red-500 text-sm mb-4 bg-red-100 p-4 rounded-md hover:bg-red-200 text-center;
+    }
+
+    /* Fim dos Alertas */
+
+    /* Estilos padrões para formulários */
+    form {
+        @apply flex flex-col gap-3;
+    }
+
+    input {
+        @apply border border-gray-300 rounded-md p-2 hover:border-gray-500 hover:transition-all duration-300 hover:transform hover:scale-105 focus:outline-none;
+    }
+
+    body {
+        @apply bg-gray-100 m-0 overflow-hidden bg-cover;
+        background-image: url('../images/bg-football.jpg');
+        background-repeat: no-repeat;
+    }
+
+    img {
+        @apply w-full h-full object-cover;
+    }
+
+    button,
+    a {
+        @apply font-bold py-2 px-4 rounded cursor-pointer transition-all duration-300 hover:scale-105 mt-4;
+        @apply bg-blue-600 hover:bg-blue-700 text-white shadow-md;
+
+    }
+
+    /*Fim dos estilos padrões para formulários*/
+
+    /* Estilos para tabelas */
+    .table-container {
+        @apply flex flex-col justify-center items-center min-h-screen p-6;
+    }
+
+    table {
+        @apply w-full border border-gray-200 shadow-md rounded-lg overflow-hidden;
+    }
+
+    thead {
+        @apply bg-blue-600 text-white;
+    }
+
+    thead th {
+        @apply px-4 py-3 text-sm font-semibold tracking-wide text-center;
+    }
+
+    tbody tr {
+        @apply transition-colors duration-200 hover:bg-gray-100;
+    }
+
+    tbody td {
+        @apply px-4 py-2 text-sm text-gray-700;
+    }
+
+    th,
+    td {
+        @apply border border-gray-200;
+    }
+
+    .actions {
+        @apply p-5;
+    }
+
+    tbody {
+        @apply bg-white text-center;
+    }
+
+    .registerButton {
+        @apply mt-4 self-end;
+    }
+
+    /* Fim dos estilos para tabelas */
+
+    .container {
+        @apply flex justify-center items-center min-w-screen min-h-screen;
+    }
+
+
+}
