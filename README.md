@@ -23,6 +23,7 @@ A ideia é centralizar a criação de equipes, o gerenciamento de jogadores e os
 -   **Blade** (template engine)
 -   **HTML / CSS / JavaScript**
 -   **Vite**
+-   **Tailwind CSS**
 
 ## Instalação e Execução
 
