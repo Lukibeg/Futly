@@ -54,4 +54,32 @@ class TeamService
             return $team;
         });
     }
+
+    public function leaveTeam(Team $team, User $user): void
+    {
+        // 1. REGRA DE NEGÓCIO: O dono não pode abandonar o time.
+        if ($team->owner_id === $user->id) {
+            throw new \Exception('O dono não pode sair do time. Você pode apagar o time ou transferir a propriedade.');
+        }
+
+        // 2. REGRA DE NEGÓCIO: O usuário deve ser membro do time para poder sair.
+        if (!in_array($user->id, $team->members)) {
+            dd($user->id);
+            throw new \Exception('Você não é membro deste time.');
+        }
+
+        DB::transaction(function () use ($team, $user) {
+            $newMembers = array_values(array_diff($team->members, [$user->id]));
+
+            $user->team_id = null;
+            $user->save();
+
+            if (empty($newMembers)) {
+                $team->delete();
+            } else {
+                $team->members = $newMembers;
+                $team->save();
+            }
+        });
+    }
 }
