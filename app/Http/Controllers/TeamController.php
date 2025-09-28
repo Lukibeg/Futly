@@ -18,21 +18,32 @@ class TeamController extends Controller
     {
         $this->teamService = $teamService;
     }
-
+    // No TeamController
     public function index()
     {
-        $teams = Team::with('owner')->get();
-        $capacity = 5;
-        $membersCount = Team::select('members')->get();
-        $members = $membersCount->pluck('members')->all();
-        $membersQuantity = count(isset($members[0]) ? $members[0] : []);
+        // 1. Buscamos o time do usuário logado de forma eficiente.
+        $myTeam = Auth::user()->team;
 
+        // 2. Buscamos os outros times, já excluindo o time do usuário (se ele tiver um).
+        $query = Team::with('owner');
 
-        if ($teams->isEmpty()) {
-            return redirect()->route('teams.create')->with('error', 'Não há times cadastrados');
+        if ($myTeam) {
+            // Exclui o time do usuário da lista principal
+            $query->where('id', '!=', $myTeam->id);
         }
 
-        return view('teams.index', ['teams' => $teams, 'membersQuantity' => $membersQuantity]);
+        $teams = $query->get();
+
+        // 3. (Opcional) Se não houver nenhum time no sistema, redireciona.
+        if ($teams->isEmpty() && !$myTeam) {
+            return redirect()->route('teams.create')->with('error', 'Nenhum time cadastrado. Crie o primeiro!');
+        }
+
+        // 4. Enviamos as duas variáveis separadas para a view.
+        return view('teams.index', [
+            'myTeam' => $myTeam,
+            'teams' => $teams,
+        ]);
     }
 
     public function create(Request $request): View
@@ -75,7 +86,18 @@ class TeamController extends Controller
 
     public function show(Team $team)
     {
-        return 'Found team';
+        $users = User::where('team_id', $team->id)->get();
+        return view('teams.users', ['users' => $users, 'team' => $team]);
+    }
+
+    public function leaveTeam(Team $team)
+    {
+        try {
+            $this->teamService->leaveTeam($team, Auth::user());
+            return redirect()->route('teams.index', status: 302)->with('success', 'Você saiu do time com sucesso.');
+        } catch (\Exception $e) {
+            return redirect()->route('teams.index', status: 302)->with('error', 'Você não faz parte deste time.');
+        }
     }
 
     /**
