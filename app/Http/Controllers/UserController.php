@@ -37,10 +37,15 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(User $user)
     {
-        $user = User::find($id);
-        return view('users.profile', compact('user'));
+        $authUser = Auth::user()->id;
+
+        if ($authUser == $user->id) {
+            return view('users.profile', compact('user'));
+        } else {
+            return view('users.showProfile', compact('user'));
+        }
     }
 
     /**
@@ -56,9 +61,9 @@ class UserController extends Controller
      */
     public function update(Request $request) {}
 
-    public function updateProfile(Request $request)
+    public function updateProfile(Request $request, User $user)
     {
-        $user = Auth::user()->id;
+        $authUser = Auth::user()->id;
 
         $validated = $request->validate([
             'birthdate' => 'date',
@@ -80,7 +85,7 @@ class UserController extends Controller
         }
 
         try {
-            $user = User::find($user);
+            $user = User::find($user->id);
             $user->update($validated);
             return redirect()->route('users.show', $user->id)->with('success', 'Perfil atualizado com sucesso');
         } catch (\Exception $e) {
