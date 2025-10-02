@@ -12,28 +12,92 @@
 
 @layer components {
 
+    /* Navbar layout */
     .player-photo {
-        @apply w-20 h-20 border border-gray-300 rounded-lg overflow-hidden;
+        @apply object-cover rounded-full w-10 h-10 border border-cyan-50;
+    }
+
+    .user-photo {
+        @apply object-cover rounded-full w-20 h-20 border border-cyan-50;
+    }
+
+    header {
+        @apply h-15 w-full;
+
+    }
+
+    .page-info {
+        @apply relative text-center font-semibold rounded-md hover:text-gray-500 shadow-md hover:transition-all duration-300 hover:transform hover:scale-105 p-1 text-xl mb-5;
+    }
+
+    .profile-name {
+        @apply font-semibold text-lg inline-block;
+        @apply flex justify-center items-center py-0 px-7 gap-2 mr-20;
+        @apply border rounded-md shadow-md border-gray-600;
+    }
+
+    .navbar-list {
+        @apply flex justify-center w-full p-1 rounded-xl bg-white/20 backdrop-blur-md shadow-md relative h-full;
+    }
+
+    .dropdown-profile {
+        @apply flex justify-center items-center absolute right-10 w-12 h-12 hover:cursor-pointer p-1;
+    }
+
+    .navbar-list a {
+        @apply mr-6 px-4 py-2 rounded-lg text-white bg-blue-600 hover:bg-blue-700 shadow-md transition;
+    }
+
+    .navbar-buttons {
+        @apply flex justify-center items-center;
+    }
+
+    /* End Navbar layout */
+
+    /* Formulários de usuários */
+    .title-container {
+        @apply text-center text-2xl font-bold mb-10 hover:text-gray-500 hover:transition-all duration-300 hover:transform hover:scale-105;
+    }
+
+    .title-page {
+        @apply flex flex-col justify-center items-center mt-10;
+    }
+
+    .name-profile {
+        @apply text-4xl font-bold;
+    }
+
+    .label-profile {
+        @apply block text-gray-700 text-sm font-bold mb-2;
+    }
+
+    .select-profile {
+        @apply shadow-md appearance-none border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight outline-none;
+    }
+
+    .input-profile {
+        @apply shadow-md appearance-none border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight outline-none disabled:bg-gray-200 resize-none;
     }
 
     .login-container {
         @apply flex flex-col mx-auto p-20 border border-gray-300 rounded-md shadow-md max-w-md w-full mb-30 bg-white/20 backdrop-blur-md;
     }
 
-    .page-info {
-        @apply absolute top-35 font-semibold rounded-md hover:text-gray-500 shadow-md hover:transition-all duration-300 hover:transform hover:scale-105 p-1 text-xl;
+    .profile-form {
+        @apply bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4;
     }
 
-    .title-container {
-        @apply text-center text-2xl font-bold mb-10 hover:text-gray-500 hover:transition-all duration-300 hover:transform hover:scale-105;
+    .form-footer {
+        @apply flex flex-col justify-center items-center mx-auto;
     }
 
-    .navbar-list {
-        @apply flex justify-center w-full p-5 rounded-xl bg-white/20 backdrop-blur-md shadow-md;
+    .profile-grid {
+        @apply grid grid-cols-1 md:grid-cols-2 gap-6;
     }
 
-    .navbar-list a {
-        @apply mr-6 px-4 py-2 rounded-lg text-white bg-blue-600 hover:bg-blue-700 shadow-md transition;
+
+    .description-container {
+        @apply text-center mb-4 text-lg text-gray-500;
     }
 
     .forget-password {
@@ -41,7 +105,7 @@
 
     }
 
-    .navbar-buttons {}
+    /* Fim dos formulários de usuários */
 
     /* Alertas */
     .success-container {
@@ -64,7 +128,8 @@
     }
 
     body {
-        @apply bg-gray-100 m-0 overflow-hidden bg-cover;
+        @apply bg-gray-100 m-0 bg-cover;
+        overflow-x: hidden;
         background-image: url('../images/bg-football.jpg');
         background-repeat: no-repeat;
     }
@@ -73,9 +138,13 @@
         @apply w-full h-full object-cover;
     }
 
+    input[type="file"] {
+        @apply hidden;
+    }
+
     button,
     a {
-        @apply font-bold py-2 px-4 rounded cursor-pointer transition-all duration-300 hover:scale-105 mt-4;
+        @apply font-bold py-2 px-4 rounded cursor-pointer transition-all duration-300 hover:scale-105;
         @apply bg-blue-600 hover:bg-blue-700 text-white shadow-md;
 
     }
@@ -127,8 +196,13 @@
     /* Fim dos estilos para tabelas */
 
     .container {
-        @apply flex justify-center items-center min-w-screen min-h-screen;
+        @apply flex flex-col justify-center items-center min-w-screen min-h-screen;
     }
+
+    .container-teams {
+        @apply w-4/5 mx-auto;
+    }
+
 
 
 }

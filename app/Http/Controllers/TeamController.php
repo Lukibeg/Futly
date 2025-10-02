@@ -18,28 +18,21 @@ class TeamController extends Controller
     {
         $this->teamService = $teamService;
     }
-    // No TeamController
     public function index()
     {
-        // 1. Buscamos o time do usuário logado de forma eficiente.
         $myTeam = Auth::user()->team;
-
-        // 2. Buscamos os outros times, já excluindo o time do usuário (se ele tiver um).
         $query = Team::with('owner');
 
         if ($myTeam) {
-            // Exclui o time do usuário da lista principal
             $query->where('id', '!=', $myTeam->id);
         }
 
         $teams = $query->get();
 
-        // 3. (Opcional) Se não houver nenhum time no sistema, redireciona.
         if ($teams->isEmpty() && !$myTeam) {
             return redirect()->route('teams.create')->with('error', 'Nenhum time cadastrado. Crie o primeiro!');
         }
 
-        // 4. Enviamos as duas variáveis separadas para a view.
         return view('teams.index', [
             'myTeam' => $myTeam,
             'teams' => $teams,

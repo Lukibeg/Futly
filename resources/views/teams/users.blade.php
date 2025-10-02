@@ -1,11 +1,13 @@
 @extends('layouts.app')
 
+
 @section('content')
 
+
     <div class="title-page flex flex-col justify-center items-center mt-10">
-        <h1 class="text-4xl font-bold">Jogadores</h1>
+        <h1 class="text-4xl font-bold">Jogadores do time: {{ $team->name }}</h1>
         <div class="description-container text-center mb-4 text-lg text-gray-500">
-            <p class="description-text">Aqui você pode visualizar todos os jogadores presentes na plataforma.</p>
+            <p class="description-text">Veja os jogadores do time</p>
         </div>
     </div>
 
@@ -33,15 +35,7 @@
                     </div>
 
                     <div class="flex flex-row items-center justify-center gap-4 mt-3">
-
                         <a href="{{ route('users.show', $user->id) }}">Ver perfil</a>
-
-                        <form action="{{route('invitePlayerToTeam', auth()->user()->team_id ?? 0)}}" method="POST">
-                            @csrf
-                            <input type="hidden" name="user_id" value="{{ $user->id }}">
-                            <button type="submit">Convidar para time</button>
-                        </form>
-
                     </div>
 
                 </div>

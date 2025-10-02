@@ -25,7 +25,7 @@ class Team extends Model
     {
         $members = $this->members;
         if (!in_array($userId, $members)) {
-            $members[] = $userId;
+            $members[] = json_encode($userId);
             $this->members = $members;
             $this->save();
         }

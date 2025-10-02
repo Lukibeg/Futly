@@ -100,10 +100,18 @@ class TeamJoinRequestController extends Controller
         }
     }
 
-    public function invitePlayerToTeam(User $user, Team $team): RedirectResponse
+    public function invitePlayerToTeam(Request $request, Team $team): RedirectResponse
     {
+
         try {
-            // $this->teamJoinRequestService->createJoinRequest($team, $user);
+            $validated = $request->validate([
+                'user_id' => 'required|exists:users,id',
+            ], [
+                'user_id.required' => 'O ID do jogador é obrigatório',
+                'user_id.exists' => 'O jogador não existe',
+            ]);
+            $user = User::find($validated['user_id']);
+            $this->teamJoinRequestService->createInviteJoinRequest($team, $user);
             return redirect()->route('teams.index')->with('success', 'Jogador convidado para o time com sucesso');
         } catch (Exception $e) {
             return redirect()->route('teams.index')->with('error', 'Erro ao convidar jogador para o time: ' . $e->getMessage());

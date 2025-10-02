@@ -5,13 +5,14 @@ namespace App\Services;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\TeamJoinRequest;
+use App\Models\InviteJoinRequest;
 use Illuminate\Support\Facades\DB;
 
 
 class TeamJoinRequestService
 {
 
-    public function __construct(protected Team $teamModel, protected User $userModel, protected TeamJoinRequest $teamJoinRequestModel) {}
+    public function __construct(protected Team $teamModel, protected User $userModel, protected TeamJoinRequest $teamJoinRequestModel, protected InviteJoinRequest $inviteJoinRequestModel) {}
 
     public function createJoinRequest(Team $team,  User $user): TeamJoinRequest
     {
@@ -39,6 +40,7 @@ class TeamJoinRequestService
         return $this->teamJoinRequestModel->create([
             'team_id' => $team->id,
             'user_id' => $user->id,
+            'status' => 'pending'
         ]);
     }
 
@@ -65,6 +67,34 @@ class TeamJoinRequestService
             $joinRequest->update(['status' => $status]);
 
             return $joinRequest;
+        });
+    }
+
+    public function createInviteJoinRequest(Team $team, User $user)
+    {
+
+        DB::transaction(function () use ($team, $user) {
+            if ($this->inviteJoinRequestModel->where('team_id', $team->id)
+                ->where('invite_to_id', $user->id)
+                ->where('invite_by_id', $team->owner_id)
+                ->where('status', 'pending')
+                ->exists()
+            ) {
+                throw new \Exception('Você já convidou este jogador para este time.');
+            }
+
+
+            if ($team->owner_id === $user->id) {
+                throw new \Exception('Você não pode se convidar para o seu próprio time.');
+            }
+
+
+            return $this->inviteJoinRequestModel->create([
+                'team_id' => $team->id,
+                'invite_to_id' => $user->id,
+                'invite_by_id' => $team->owner_id,
+                'status' => 'pending'
+            ]);
         });
     }
 }
