@@ -26,10 +26,15 @@ Route::post('/login', [LoginController::class, 'login'])->name('login');
 
 Route::middleware(['auth'])->group(function () {
 
+    Route::get('/teams/manage', [TeamJoinRequestController::class, 'index'])->name('manage');
     Route::resource('/users', UserController::class)->names('users');
     Route::resource('/teams', TeamController::class)->names('teams');
-    Route::get('/teams/manage', [TeamJoinRequestController::class, 'index'])->name('manage');
+    Route::post('/teams/{team}/invite', [TeamJoinRequestController::class, 'invitePlayerToTeam'])->name('invitePlayerToTeam');
+    Route::get('/teams/{team}/users', [TeamController::class, 'show'])->name('teamsUsers');
     Route::get('/teams/{team}/join', [TeamJoinRequestController::class, 'requestJoinTeam'])->name('requestJoinTeam');
     Route::post('/teams/{joinRequest}/join', [TeamJoinRequestController::class, 'responseJoinRequest'])->name('responseJoinRequest');
+    Route::delete('/teams/{team}/leave', [TeamController::class, 'leaveTeam'])->name('leaveTeam');
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
+    Route::get('/profile', [UserController::class, 'show'])->name('profile');
+    Route::put('/profile/{user}', [UserController::class, 'updateProfile'])->name('profile.update');
 });
