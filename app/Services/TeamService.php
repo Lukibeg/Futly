@@ -4,82 +4,52 @@ namespace App\Services;
 
 use App\Models\Team;
 use App\Models\User;
+use App\Repositories\RepositoryInterface;
 use Illuminate\Support\Facades\DB;
 
 class TeamService
 {
+    protected $repositoryInterface;
 
-    protected $teamModel;
-    protected $userModel;
-
-    public function __construct(Team $teamModel, User $userModel)
+    public function __construct(RepositoryInterface $repositoryInterface)
     {
-        $this->teamModel = $teamModel;
-        $this->userModel = $userModel;
+        $this->repositoryInterface = $repositoryInterface;
     }
 
     public function createTeam(array $data)
     {
-        DB::transaction(function () use ($data) {
-            $user = $this->userModel;
-            $userOwner = $user->findOrFail($data['owner_id']);
-            $members = [];
+        $userOwner = $this->repositoryInterface->findUserById($data['owner_id']);
 
-            if ($userOwner->team_id !== null) {
-                throw new \Exception('Você já faz parte de um time!');
-            }
+        if ($userOwner->team_id !== null) {
+            throw new \Exception('Você já faz parte de um time!');
+        }
 
+        if (!$userOwner) {
+            throw new \Exception('O usuário dono não existe.');
+        }
 
-            if (!isset($data['members'])) {
-                $data['members'] = $members;
-            } else {
-                $members = $data['members'];
-            }
+        $members = $data['members'] ?? [];
+        $members[] = $data['owener_id'];
+        $members = array_unique($members);
 
-            $members[] = $data['owner_id'];
-            $members = array_unique($members);
+        if ($this->repositoryInterface->checkIfUsersAreInTeam($members)) {
+            throw new \Exception('Um ou mais usuários já está em um time.');
+        }
 
-
-            $existingMembers = $user->whereIn('id', $members)->whereNotNull('team_id')->exists();
-
-            if ($existingMembers) {
-                throw new \Exception('Um ou mais usuários já está em um time.');
-            }
-
-
-            $data['members'] = $members;
-            $team = $this->teamModel->create($data);
-            $user->whereIn('id', $members)->update(['team_id' => $team->id]);
-
-            return $team;
-        });
+        return $this->repositoryInterface->createTeam($data);
     }
 
-    public function leaveTeam(Team $team, User $user): void
+    public function leaveTeam(Team $team, User $user)
     {
-        // 1. REGRA DE NEGÓCIO: O dono não pode abandonar o time.
-        if ($team->owner_id === $user->id) {
+
+        if ($user->owner_id === $user->id) {
             throw new \Exception('O dono não pode sair do time. Você pode apagar o time ou transferir a propriedade.');
         }
 
-        // 2. REGRA DE NEGÓCIO: O usuário deve ser membro do time para poder sair.
         if (!in_array($user->id, $team->members)) {
-            dd($user->id);
             throw new \Exception('Você não é membro deste time.');
         }
 
-        DB::transaction(function () use ($team, $user) {
-            $newMembers = array_values(array_diff($team->members, [$user->id]));
-
-            $user->team_id = null;
-            $user->save();
-
-            if (empty($newMembers)) {
-                $team->delete();
-            } else {
-                $team->members = $newMembers;
-                $team->save();
-            }
-        });
+        $this->repositoryInterface->leaveTeam($team, $user);
     }
 }
