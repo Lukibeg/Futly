@@ -4,14 +4,14 @@ namespace App\Services;
 
 use App\Models\Team;
 use App\Models\User;
-use App\Repositories\RepositoryInterface;
+use App\Repositories\TeamRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 
 class TeamService
 {
     protected $repositoryInterface;
 
-    public function __construct(RepositoryInterface $repositoryInterface)
+    public function __construct(TeamRepositoryInterface $repositoryInterface)
     {
         $this->repositoryInterface = $repositoryInterface;
     }
@@ -29,7 +29,7 @@ class TeamService
         }
 
         $members = $data['members'] ?? [];
-        $members[] = $data['owener_id'];
+        $members[] = $data['owner_id'];
         $members = array_unique($members);
 
         if ($this->repositoryInterface->checkIfUsersAreInTeam($members)) {
