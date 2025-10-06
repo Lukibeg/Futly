@@ -6,13 +6,14 @@ use App\Models\Team;
 use App\Models\User;
 use App\Models\TeamJoinRequest;
 use App\Models\InviteJoinRequest;
+use App\Repositories\TeamInviteRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 
 
 class TeamJoinRequestService
 {
 
-    public function __construct(protected Team $teamModel, protected User $userModel, protected TeamJoinRequest $teamJoinRequestModel, protected InviteJoinRequest $inviteJoinRequestModel) {}
+    public function __construct(protected Team $teamModel, protected User $userModel, protected TeamJoinRequest $teamJoinRequestModel, protected InviteJoinRequest $inviteJoinRequestModel, protected TeamInviteRepositoryInterface $teamInviteInterfaceRepository) {}
 
     public function createJoinRequest(Team $team,  User $user): TeamJoinRequest
     {
@@ -51,50 +52,26 @@ class TeamJoinRequestService
             throw new \Exception('Este pedido já foi respondido.');
         }
 
-        return DB::transaction(function () use ($joinRequest, $status) {
-            $userToJoin = $joinRequest->user;
-            $team = $joinRequest->team;
-
-            if ($status === 'approved') {
-                if ($userToJoin->team_id !== null) {
-                    throw new \Exception("O usuário {$userToJoin->name} já entrou em outro time.");
-                }
-
-                $team->addMember($userToJoin->id);
-                $userToJoin->update(['team_id' => $team->id]);
+        if ($status === 'approved') {
+            if ($this->teamInviteInterfaceRepository->verifyIfInvitedUserHasTeam($joinRequest)) {
+                throw new \Exception("O usuário {$joinRequest->name} já entrou em outro time.");
             }
+        }
 
-            $joinRequest->update(['status' => $status]);
-
-            return $joinRequest;
-        });
+        return $this->teamInviteInterfaceRepository->responseJoinRequest($joinRequest, $status);
     }
 
     public function createInviteJoinRequest(Team $team, User $user)
     {
 
-        DB::transaction(function () use ($team, $user) {
-            if ($this->inviteJoinRequestModel->where('team_id', $team->id)
-                ->where('invite_to_id', $user->id)
-                ->where('invite_by_id', $team->owner_id)
-                ->where('status', 'pending')
-                ->exists()
-            ) {
-                throw new \Exception('Você já convidou este jogador para este time.');
-            }
+        if ($this->teamInviteInterfaceRepository->verifyIfPlayerHasConvited($user, $team)) {
+            throw new \Exception('Você já convidou este usuário para seu time.');
+        }
 
+        if ($this->teamInviteInterfaceRepository->verifyIfTeamOwnerIdIsEqualUserId($user, $team)) {
+            throw new \Exception('Você não pode se convidar para o seu próprio time.');
+        }
 
-            if ($team->owner_id === $user->id) {
-                throw new \Exception('Você não pode se convidar para o seu próprio time.');
-            }
-
-
-            return $this->inviteJoinRequestModel->create([
-                'team_id' => $team->id,
-                'invite_to_id' => $user->id,
-                'invite_by_id' => $team->owner_id,
-                'status' => 'pending'
-            ]);
-        });
+        return $this->teamInviteInterfaceRepository->createInviteJoinRequest($user, $team);
     }
 }
