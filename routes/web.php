@@ -27,6 +27,7 @@ Route::post('/login', [LoginController::class, 'login'])->name('login');
 Route::middleware(['auth'])->group(function () {
 
     Route::get('/teams/manage', [TeamJoinRequestController::class, 'index'])->name('manage');
+    Route::get('/users/invites', [TeamJoinRequestController::class, 'showInvites'])->name('test');
     Route::resource('/users', UserController::class)->names('users');
     Route::resource('/teams', TeamController::class)->names('teams');
     Route::post('/teams/{team}/invite', [TeamJoinRequestController::class, 'invitePlayerToTeam'])->name('invitePlayerToTeam');

@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class Authentication
+class CheckValidTeam
 {
     /**
      * Handle an incoming request.
@@ -15,6 +15,10 @@ class Authentication
      */
     public function handle(Request $request, Closure $next): Response
     {
+
+        $teamId = $request->route('team');
+        dd($request);
+
         return $next($request);
     }
 }

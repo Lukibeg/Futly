@@ -14,7 +14,7 @@
 
     /* Navbar layout */
     .player-photo {
-        @apply object-cover rounded-full w-10 h-10 border border-cyan-50;
+        @apply object-cover rounded-full w-8 h-8 border border-cyan-50;
     }
 
     .user-photo {

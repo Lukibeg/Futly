@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\TeamJoinRequest;
+use App\Models\InviteJoinRequest;
 use App\Models\Notification;
 use App\Services\TeamJoinRequestService;
 use Exception;
@@ -62,18 +63,20 @@ class TeamJoinRequestController extends Controller
         }
     }
 
+    public function showInvites()
+    {
+        $user = Auth::user();
+        $invitesForUser = InviteJoinRequest::where('invite_to_id', $user->id)->where('status', 'pending')->with(['inviteBy', 'team'])->get();
+        return view('users.invites', compact('invitesForUser'));
+    }
     public function responseJoinRequest(Request $request, TeamJoinRequest $joinRequest): RedirectResponse
     {
-
-
         $validated = $request->validate([
             'status' => 'required|in:approved,rejected',
         ], [
             'status.required' => 'O status é obrigatório',
             'status.in' => 'O status deve ser approved ou rejected',
         ]);
-
-
 
         try {
 
@@ -100,7 +103,7 @@ class TeamJoinRequestController extends Controller
         }
     }
 
-    public function invitePlayerToTeam(Request $request, Team $team): RedirectResponse
+    public function invitePlayerToTeam(Request $request, ?Team $team): RedirectResponse
     {
 
         try {
