@@ -8,7 +8,7 @@ use App\Models\TeamJoinRequest;
 use App\Models\InviteJoinRequest;
 use App\Repositories\TeamInviteRepositoryInterface;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Auth;
 
 class TeamJoinRequestService
 {
@@ -63,6 +63,17 @@ class TeamJoinRequestService
 
     public function createInviteJoinRequest(Team $team, User $user)
     {
+
+        
+        $loggedUser = Auth::user();
+
+        if($user->id !== $team->owner_id){
+            throw new \Exception('Você não pode se convidar para um time alheio.');
+        }
+
+        if($user->team_id == 0){
+            throw new \Exception('Você não possui um time. Para convidar outros usuários para seu time, por favor, crie uma equipe.');
+        }
 
         if ($this->teamInviteInterfaceRepository->verifyIfPlayerHasConvited($user, $team)) {
             throw new \Exception('Você já convidou este usuário para seu time.');
