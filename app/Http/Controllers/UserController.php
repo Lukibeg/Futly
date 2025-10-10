@@ -84,6 +84,10 @@ class UserController extends Controller
             $validated['profile_picture'] = null;
         }
 
+        if ($authUser !== $user->id) {
+            return redirect()->route('users.show', $authUser)->with('error', 'Você não possui permissão para realizar esta ação.');
+        }
+
         try {
             $user = User::find($user->id);
             $user->update($validated);

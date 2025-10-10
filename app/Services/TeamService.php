@@ -9,12 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class TeamService
 {
-    protected $repositoryInterface;
-
-    public function __construct(TeamRepositoryInterface $repositoryInterface)
-    {
-        $this->repositoryInterface = $repositoryInterface;
-    }
+    public function __construct(protected TeamRepositoryInterface $repositoryInterface) {}
 
     public function createTeam(array $data)
     {
