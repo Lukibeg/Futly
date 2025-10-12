@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\UserService;
+use Exception;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -41,16 +42,17 @@ class UserController extends Controller
         ]);
 
         try {
-            $dataUpdated = $this->userService->patchUserData($user, $validated, $authUser);
+            $userUpdated = $this->userService->patchUserData($user, $validated, $authUser);
 
-            return response()->json(['message' => 'Dados atualizados com sucesso!', 'dataUpdated' => $dataUpdated], 200);
-        } catch (\Exception $e) {
-            return $e->getMessage();
+            return response()->json(['message' => 'Dados atualizados com sucesso!', 'user' => $userUpdated], status: 200);
+        } catch (Exception $e) {
+            return response()->json(["message" => $e->getMessage()], $e->getCode());
         }
     }
-    public function apiShow()
+
+    public function delete(User $user)
     {
-        http_response_code(200);
-        return json_encode(['teste' => 'Retornado']);
+        $user = User::find($user->id);
+        $user::delete();
     }
 }
