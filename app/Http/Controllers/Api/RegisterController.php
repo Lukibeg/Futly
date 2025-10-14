@@ -31,7 +31,7 @@ class RegisterController extends Controller
 
             return response()->json(['success' => 'Usuário criado com sucesso!', 'user' => $user], 201);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Ocorreu um erro ao criar o usuário.', 'error' => $e->getMessage()], 500);
+            return response()->json(['message' => 'Ocorreu um erro ao criar o usuário.', 'error' => $e->getMessage()], $e->getCode());
         }
     }
 }
