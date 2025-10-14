@@ -2,6 +2,8 @@
 
 namespace App\Repositories;
 
+use App\Repositories\Interface\TeamRepositoryInterface;
+
 use App\Models\InviteJoinRequest;
 use App\Models\TeamJoinRequest;
 use App\Models\User;
@@ -13,6 +15,11 @@ class TeamEloquentRepository implements TeamRepositoryInterface
 {
     public function __construct(protected User $userModel, protected Team $teamModel) {}
 
+
+    public function listAllTeam()
+    {
+        return Team::all();
+    }
     public function createTeam(array $data)
     {
         return DB::transaction(function () use ($data) {
@@ -48,5 +55,11 @@ class TeamEloquentRepository implements TeamRepositoryInterface
     public function checkIfUsersAreInTeam(array $userIds): bool
     {
         return $this->userModel->whereIn('id', $userIds)->whereNotNull('team_id')->exists();
+    }
+
+    public function selectTeamsWhereIsDifferentOfMyTeam(Team $team)
+    {
+        $query = Team::with('owner');
+        return $query->where('id', '!=', $team->id)->get();
     }
 }
