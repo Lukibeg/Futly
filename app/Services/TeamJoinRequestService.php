@@ -6,7 +6,7 @@ use App\Models\Team;
 use App\Models\User;
 use App\Models\TeamJoinRequest;
 use App\Models\InviteJoinRequest;
-use App\Repositories\TeamInviteRepositoryInterface;
+use App\Repositories\Interface\TeamInviteRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
