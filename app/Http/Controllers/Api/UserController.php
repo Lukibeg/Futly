@@ -5,16 +5,23 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\UserService;
-use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-
     public function __construct(protected UserService $userService) {}
+
+    public function getAvaliablePlayers(Request $request)
+    {
+        try {
+            $avaliableUsers = $this->userService->showAvaliableUserData();
+            return response()->json(['success' => $avaliableUsers], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        }
+    }
     public function index()
     {
         return User::all();
@@ -45,14 +52,19 @@ class UserController extends Controller
             $userUpdated = $this->userService->patchUserData($user, $validated, $authUser);
 
             return response()->json(['message' => 'Dados atualizados com sucesso!', 'user' => $userUpdated], status: 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json(["message" => $e->getMessage()], $e->getCode());
         }
     }
 
-    public function delete(User $user)
+    public function delete(Request $request, User $user)
     {
-        $user = User::find($user->id);
-        $user::delete();
+        $authenticatedUser = $request->user()->id;
+        try {
+            $userDeleted = $this->userService->deleteUserData($user, $authenticatedUser);
+            return response()->json(['message' => 'Usuário deletado com sucesso!', 'user' => $userDeleted], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], $e->getCode());
+        }
     }
 }
