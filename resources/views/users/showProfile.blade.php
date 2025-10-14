@@ -109,7 +109,7 @@
                         <textarea disabled class="input-profile" id="weaknesses" name="weaknesses" rows="3"
                             placeholder="Ex: Jogo aéreo, Perna esquerda">{{ $user->weaknesses }}
 
-                                    </textarea>
+                                        </textarea>
                     </div>
 
                 </div>

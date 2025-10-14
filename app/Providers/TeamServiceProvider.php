@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use App\Repositories\TeamEloquentRepository;
-use App\Repositories\TeamRepositoryInterface;
+use App\Repositories\Interface\TeamRepositoryInterface;
 use App\Services\TeamService;
 use Illuminate\Support\ServiceProvider;
 

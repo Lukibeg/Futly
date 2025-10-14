@@ -2,11 +2,13 @@
 
 namespace App\Services;
 
+use App\Repositories\Interface\TeamInviteRepositoryInterface;
+
+
 use App\Models\Team;
 use App\Models\User;
 use App\Models\TeamJoinRequest;
 use App\Models\InviteJoinRequest;
-use App\Repositories\Interface\TeamInviteRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -64,14 +66,14 @@ class TeamJoinRequestService
     public function createInviteJoinRequest(Team $team, User $user)
     {
 
-        
+
         $loggedUser = Auth::user();
 
-        if($user->id !== $team->owner_id){
+        if ($user->id !== $team->owner_id) {
             throw new \Exception('Você não pode se convidar para um time alheio.');
         }
 
-        if($user->team_id == 0){
+        if ($user->team_id == 0) {
             throw new \Exception('Você não possui um time. Para convidar outros usuários para seu time, por favor, crie uma equipe.');
         }
 

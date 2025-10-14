@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Repositories;
+use App\Repositories\Interface\TeamInviteRepositoryInterface;
 
 use App\Models\InviteJoinRequest;
 use App\Models\TeamJoinRequest;

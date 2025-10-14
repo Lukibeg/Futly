@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Repositories\TeamInviteRepositoryInterface;
+use App\Repositories\Interface\TeamInviteRepositoryInterface;
 use App\Repositories\TeamInviteEloquentRepository;
 use App\Services\TeamJoinRequestService;
 use Illuminate\Support\ServiceProvider;
