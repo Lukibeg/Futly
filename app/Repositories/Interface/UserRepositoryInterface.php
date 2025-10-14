@@ -8,5 +8,7 @@ use App\Models\User;
 
 interface UserRepositoryInterface
 {
-    public function patch(User $user, array $data);
+    public function patchUserInterface(User $user, array $data);
+    public function deleteUserInterface(User $user, int $authenticatedUser);
+    public function showAvaliableUserInterface();
 }
