@@ -16,6 +16,10 @@ class TeamEloquentRepository implements TeamRepositoryInterface
     public function __construct(protected User $userModel, protected Team $teamModel) {}
 
 
+    public function showTeam(Team $team)
+    {
+        return User::select('id', 'name', 'position')->where('team_id', $team->id)->get();
+    }
     public function listAllTeam()
     {
         return Team::all();
