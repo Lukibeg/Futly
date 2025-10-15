@@ -13,9 +13,8 @@ use Illuminate\Support\Facades\Auth;
 class TeamController extends Controller
 {
     public function __construct(protected TeamService $teamService) {}
-    public function index()
+    public function index(Request $request)
     {
-
         try {
             //Using eloquent relations 
             $myTeam = Auth::user()->team;
@@ -27,43 +26,34 @@ class TeamController extends Controller
         }
     }
 
-    // public function create(Request $request)
-    // {
-    //     try {
-    //         $users = $this->teamService->availiableUsersToJoinTeam();
-    //         return response()->json(['success' => $users]);
-    //     } catch (\Exception $e) {
-    //         // return view('teams.create')->with('error', 'Erro ao carregar usuários: ' . $e->getMessage());
-    //     }
-    // }
 
-    // public function store(Request $request)
-    // {
-    //     $validated = $request->validate(
-    //         [
-    //             'name' => 'required|string|max:255',
-    //             'members' => 'array',
-    //             'members.*' => 'exists:users,id',
-    //             'owner_id' => 'required|exists:users,id'
-    //         ],
-    //         [
-    //             'name.required' => 'O nome é obrigatório',
-    //             'name.string' => 'O nome deve ser uma string',
-    //             'name.max' => 'O nome deve ter no máximo 255 caracteres',
-    //             'members.array' => 'Os membros devem ser um array',
-    //             'members.*.exists' => 'Os membros devem existir no banco de dados',
-    //             'owner_id.required' => 'O líder do time é obrigatório',
-    //             'owner_id.exists' => 'O líder do time deve existir no banco de dados'
-    //         ]
-    //     );
+    public function store(Request $request)
+    {
+        $validated = $request->validate(
+            [
+                'name' => 'required|string|max:255',
+                'members' => 'array',
+                'members.*' => 'exists:users,id',
+                'owner_id' => 'required|exists:users,id'
+            ],
+            [
+                'name.required' => 'O nome é obrigatório',
+                'name.string' => 'O nome deve ser uma string',
+                'name.max' => 'O nome deve ter no máximo 255 caracteres',
+                'members.array' => 'Os membros devem ser um array',
+                'members.*.exists' => 'Os membros devem existir no banco de dados',
+                'owner_id.required' => 'O líder do time é obrigatório',
+                'owner_id.exists' => 'O líder do time deve existir no banco de dados'
+            ]
+        );
 
-    //     try {
-    //         $this->teamService->createTeam($validated);
-    //         return redirect()->route('teams.index', status: 302)->with('success', 'Time criado com sucesso. Seu usuário também foi adicionado ao time.');
-    //     } catch (\Exception $e) {
-    //         return redirect()->route('teams.create', status: 302)->with('error', 'Erro ao criar time: ' . $e->getMessage());
-    //     }
-    // }
+        try {
+            $team = $this->teamService->createTeam($validated);
+            return response()->json(['message' => 'Time criado com sucesso. Seu usuário também foi adicionado a equipe.', 'team' => $team], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        }
+    }
 
     // public function show(Team $team)
     // {
