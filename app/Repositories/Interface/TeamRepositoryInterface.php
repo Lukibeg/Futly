@@ -7,6 +7,7 @@ use App\Models\User;
 
 interface TeamRepositoryInterface
 {
+    public function showTeam(Team $team);
     public function createTeam(array $data);
     public function leaveTeam(Team $team, User $user);
     public function findUserById(int $id);
