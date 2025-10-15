@@ -12,6 +12,14 @@ use Illuminate\Support\Facades\DB;
 class TeamService
 {
     public function __construct(protected TeamRepositoryInterface $repositoryInterface) {}
+    public function showTeam(Team $team)
+    {
+        if (!$team) {
+            throw new \Exception('ID do time inválido ou time inexistente.', 404);
+        }
+
+        return $this->repositoryInterface->showTeam($team);
+    }
 
     public function listTeam(?Team $team)
     {
