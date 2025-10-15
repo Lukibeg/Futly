@@ -20,7 +20,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/users/{user}', [UserController::class, 'update']);
     Route::delete('/users/{user}', [UserController::class, 'delete']);
 
-
+    Route::get('/teams/{team}', [TeamController::class, 'show']);
     Route::get('/teams', [TeamController::class, 'index']);
     Route::post('/teams/create', [TeamController::class, 'store']);
 });
