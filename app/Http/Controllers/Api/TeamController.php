@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Team;
 use App\Services\TeamService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -55,11 +56,16 @@ class TeamController extends Controller
         }
     }
 
-    // public function show(Team $team)
-    // {
-    //     $users = User::where('team_id', $team->id)->get();
-    //     return view('teams.users', ['users' => $users, 'team' => $team]);
-    // }
+    public function show(Team $team)
+    {
+        try {
+            $users = $this->teamService->showTeam($team);
+            $data = ['team' => $team, 'users' => $users];
+            return response()->json(['message' => 'Dados obtidos com sucesso!', 'data' => $data], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        }
+    }
 
     // public function leaveTeam(Team $team)
     // {
