@@ -8,6 +8,8 @@ use App\Repositories\Interface\TeamRepositoryInterface;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+
 
 class TeamService
 {
@@ -40,7 +42,13 @@ class TeamService
     }
     public function createTeam(array $data)
     {
+        $members = [];
+        $authenticadedUserId = Auth::user()->id;
         $userOwner = $this->repositoryInterface->findUserById($data['owner_id']);
+
+        if ($authenticadedUserId !== $userOwner->id) {
+            throw new \Exception('Você não pode criar um time para outro usuário.', 403);
+        }
 
         if ($userOwner->team_id !== null) {
             throw new \Exception('Você já faz parte de um time!', 403);
@@ -50,9 +58,28 @@ class TeamService
             throw new \Exception('O usuário dono não existe.', 403);
         }
 
+        if (isset($data['nomembers']) && !isset($data['members'])) {
+            $members[] = json_encode($data['owner_id']);
+            $members = array_unique($members);
+            $data['members'] = $members;
+        }
+
         $members = $data['members'] ?? [];
         $members[] = $data['owner_id'];
         $members = array_unique($members);
+
+        foreach ($members as $memberKey => $memberValue) {
+            $members[] = json_encode($memberValue);
+            unset($members[$memberKey]);
+        }
+
+        $members = array_values($members);
+
+        $data['members'] = $members;
+
+        if (!isset($data['nomembers']) && !isset($data['members'])) {
+            throw new \Exception('Nenhum usuário selecionado, parâmetros nomembers é false.', 403);
+        }
 
         if ($this->repositoryInterface->checkIfUsersAreInTeam($members)) {
             throw new \Exception('Um ou mais usuários já está em um time.', 403);
