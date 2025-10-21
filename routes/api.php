@@ -15,6 +15,8 @@ Route::get('/user', function (Request $request) {
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/users/unassigned', [UserController::class, 'getAvaliablePlayers']);
+    Route::post('/teams/create', [TeamController::class, 'store']);
+
     Route::get('/users', [UserController::class, 'index']);
     Route::get('/users/{user}', [UserController::class, 'show']);
     Route::patch('/users/{user}', [UserController::class, 'update']);
@@ -22,7 +24,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/teams/{team}', [TeamController::class, 'show']);
     Route::get('/teams', [TeamController::class, 'index']);
-    Route::post('/teams/create', [TeamController::class, 'store']);
 });
 
 Route::post('/login', [LoginController::class, 'login']);
