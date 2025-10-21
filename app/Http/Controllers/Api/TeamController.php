@@ -34,6 +34,7 @@ class TeamController extends Controller
             [
                 'name' => 'required|string|max:255',
                 'members' => 'array',
+                'nomembers' => 'bool',
                 'members.*' => 'exists:users,id',
                 'owner_id' => 'required|exists:users,id'
             ],
