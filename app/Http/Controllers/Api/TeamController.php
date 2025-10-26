@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Models\Team;
 use App\Services\TeamService;
 use Illuminate\Http\Request;
@@ -68,34 +67,13 @@ class TeamController extends Controller
         }
     }
 
-    // public function leaveTeam(Team $team)
-    // {
-    //     try {
-    //         $this->teamService->leaveTeam($team, Auth::user());
-    //         return redirect()->route('teams.index', status: 302)->with('success', 'Você saiu do time com sucesso.');
-    //     } catch (\Exception $e) {
-    //         return redirect()->route('teams.index', status: 302)->with('error', 'Você não faz parte deste time.');
-    //     }
-    // }
-
-    // /**
-    //  * Show the form for editing the specified resource.
-    //  */
-    // public function edit(string $id)
-    // {
-    //     //
-    // }
-
-    // /**
-    //  * Update the specified resource in storage.
-    //  */
-    // public function update(Request $request, int $id) {}
-
-    // /**
-    //  * Remove the specified resource from storage.
-    //  */
-    // public function destroy(string $id)
-    // {
-    //     //
-    // }
+    public function leaveTeam(Team $team)
+    {
+        try {
+            $this->teamService->leaveTeam($team, Auth::user());
+            return response()->json(['message' => 'Ação concluída com sucesso!'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()],  $e->getCode());
+        }
+    }
 }
