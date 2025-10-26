@@ -91,7 +91,7 @@ class TeamService
     public function leaveTeam(Team $team, User $user)
     {
 
-        if ($user->owner_id === $user->id) {
+        if ($team->owner_id === $user->id) {
             throw new \Exception('O dono não pode sair do time. Você pode apagar o time ou transferir a propriedade.', 403);
         }
 
