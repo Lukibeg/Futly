@@ -12,18 +12,25 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 
+
+
+
 Route::middleware('auth:sanctum')->group(function () {
 
-    Route::get('/users/unassigned', [UserController::class, 'getAvaliablePlayers']);
-    Route::post('/teams/create', [TeamController::class, 'store']);
+    Route::controller(TeamController::class)->group(function () {
+        Route::post('/teams/create',  'store');
+        Route::get('/teams/{team}', 'show');
+        Route::get('/teams',  'index');
+        Route::delete('/teams/{team}/leave', 'leaveTeam');
+    });
 
-    Route::get('/users', [UserController::class, 'index']);
-    Route::get('/users/{user}', [UserController::class, 'show']);
-    Route::patch('/users/{user}', [UserController::class, 'update']);
-    Route::delete('/users/{user}', [UserController::class, 'delete']);
-
-    Route::get('/teams/{team}', [TeamController::class, 'show']);
-    Route::get('/teams', [TeamController::class, 'index']);
+    Route::controller(UserController::class)->group(function () {
+        Route::get('/users/unassigned',  'getAvaliablePlayers');
+        Route::get('/users', 'index');
+        Route::get('/users/{user}',  'show');
+        Route::patch('/users/{user}',  'update');
+        Route::delete('/users/{user}',  'delete');
+    });
 });
 
 Route::post('/login', [LoginController::class, 'login']);
