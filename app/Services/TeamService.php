@@ -62,20 +62,20 @@ class TeamService
             $members[] = json_encode($data['owner_id']);
             $members = array_unique($members);
             $data['members'] = $members;
+        } else {
+            $members = $data['members'];
+            $members[] = $data['owner_id'];
+            $members = array_unique($members);
+
+            foreach ($members as $memberKey => $memberValue) {
+                $members[] = json_encode($memberValue);
+                unset($members[$memberKey]);
+            }
+
+            $members = array_values($members);
+            $data['members'] = $members;
         }
 
-        $members = $data['members'] ?? [];
-        $members[] = $data['owner_id'];
-        $members = array_unique($members);
-
-        foreach ($members as $memberKey => $memberValue) {
-            $members[] = json_encode($memberValue);
-            unset($members[$memberKey]);
-        }
-
-        $members = array_values($members);
-
-        $data['members'] = $members;
 
         if (!isset($data['nomembers']) && !isset($data['members'])) {
             throw new \Exception('Nenhum usuário selecionado, parâmetros nomembers é false.', 403);
@@ -90,6 +90,10 @@ class TeamService
 
     public function leaveTeam(Team $team, User $user)
     {
+
+        if ($user->team_id == null) {
+            throw new \Exception('Você não faz parte de nenhuma equipe.');
+        }
 
         if ($team->owner_id === $user->id) {
             throw new \Exception('O dono não pode sair do time. Você pode apagar o time ou transferir a propriedade.', 403);
